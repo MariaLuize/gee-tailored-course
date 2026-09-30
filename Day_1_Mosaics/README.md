@@ -1,4 +1,4 @@
-# Construção de Mosaicos e Pré-processamento no Google Earth Engine / Mosaic Generation and Preprocessing in Google Earth Engine
+# Módulo 1: Construção de Mosaicos e Pré-processamento no Google Earth Engine / Module 1: Mosaic Generation and Preprocessing in Google Earth Engine
 ## Português
 
 Este módulo aborda o fluxo completo para carregar uma coleção de imagens de satélite, aplicar filtros temporais e espaciais, construir máscaras de nuvens baseadas em bits de qualidade, calcular índices espectrais de vegetação e água, gerar redutores estatísticos e exportar o produto final.
