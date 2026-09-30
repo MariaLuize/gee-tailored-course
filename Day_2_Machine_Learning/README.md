@@ -74,6 +74,22 @@ Map.addLayer(mosaic, visParams, 'Mosaico de Entrada');
 
 Extraímos uma amostra estatística do mosaico sem rótulos (`mosaic.sample`) e treinamos o clusterizador `ee.Clusterer.wekaKMeans` para inspecionar os agrupamentos espectrais naturais da região.
 
+
+##### Parâmetros de Configuração do K-Means (`ee.Clusterer.wekaKMeans`)
+* **`nClusters` (Integer, obrigatório/padrão: 2)**: Quantidade de centróides/grupos ($K$) em que o espaço espectral será particionado.
+* **`init` (Integer, padrão: 0)**: Método de inicialização dos centróides.
+  * `0` = *Random*: Seleção puramente aleatória de pontos iniciais.
+  * `1` = *k-means++*: Inicialização probabilística que afasta os centróides iniciais entre si, acelerando a convergência.
+  * `2` = *Canopy*: Uso de *Canopy Clustering* para estimar posições iniciais.
+  * `3` = *Farthest first*: Seleção dos pontos com maior distância relativa.
+
+
+* **`maxIterations` (Integer, padrão: 500)**: Número máximo de iterações permitidas para atualização da posição dos centróides antes de interromper o algoritmo caso não atinja convergência prévia.
+* **`fast` (Boolean, padrão: false)**: Habilita otimizações de cálculo de distância para maior velocidade de processamento, sacrificando precisão fina de posicionamento.
+* **`seed` (Integer, padrão: 10)**: Semente de números pseudoaleatórios que garante a reprodutibilidade da inicialização dos centróides.
+* **`distanceFunction` (String, padrão: 'Euclidean')**: Métrica para cálculo de distância vetorial (`'Euclidean'` para distância euclidiana ou `'Manhattan'`).
+
+Função já preenchida:
 ```javascript
 var unsupervisedSamples = mosaic.sample({
   region: mosaic.geometry(),
@@ -163,6 +179,30 @@ print('Amostras com Atributos Espectrais:', trainedSamples);
 #### 2.6 Configuração e Treinamento do Random Forest
 
 Instanciamos o classificador definindo 50 árvores (`numberOfTrees`) e o ajustamos utilizando a tabela de amostras e o vetor completo de variáveis explicativas (estatísticas temporais e índices).
+
+##### Parâmetros de Configuração do K-Means Random Forest (`ee.Classifier.smileRandomForest`)
+
+* **`numberOfTrees` (Integer)**: Quantidade total de árvores de decisão independentes geradas no comitê (*ensemble*).
+
+
+* **`variablesPerSplit` (Integer, padrão: null)**: Número de atributos/bandas avaliados aleatoriamente em cada nó para encontrar a melhor divisão. Se não for especificado (`null`), utiliza a raiz quadrada do número total de preditores ($\sqrt{M}$).
+
+
+* **`minLeafPopulation` (Integer, padrão: 1)**: Quantidade mínima de observações que um nó folha deve conter para ser criado. Valores maiores impedem a formação de ramos específicos demais voltados a ruídos amostrais.
+
+
+* **`bagFraction` (Float, padrão: 0.5)**: Fração percentual do conjunto de dados de treino selecionada aleatoriamente (via *bootstrap*) para alimentar cada árvore.
+
+
+* **`maxNodes` (Integer, padrão: null)**: Quantidade máxima de nós folhas permitida em cada árvore. Quando nulo (`null`), as árvores crescem sem limite de profundidade até que os demais critérios sejam satisfeitos.
+
+
+* **`seed` (Integer, padrão: 0)**: Semente de aleatorização para garantir que os sorteios de *bagging* e atributos possam ser replicados identicamente.
+
+
+
+
+Função já preenchida seguindo o modelo MVP:
 
 ```javascript
 var classifier = ee.Classifier.smileRandomForest({
