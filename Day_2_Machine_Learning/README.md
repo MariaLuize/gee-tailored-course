@@ -24,28 +24,28 @@ No sensoriamento remoto, o K-Means serve como análise exploratória: identifica
     <p>Convergence of k-means clustering from an unfavorable starting position (two initial cluster centers are fairly close)</p>
 </div>
 
-Para uma contextualização detalhada do funcionamento estatístico do K-means, consulte o vídeo: [StatQuest: K-means clustering](https://youtu.be/4b5d3muPQmA?si=0gfjcehjVrRFvkpf)[cite: 1].
+Para uma contextualização detalhada do funcionamento estatístico do K-means, consulte o vídeo: [StatQuest: K-means clustering](https://youtu.be/4b5d3muPQmA?si=0gfjcehjVrRFvkpf).
 
 #### 2. Classificação Supervisionada: Random Forest
 O Random Forest é um algoritmo de aprendizagem supervisionada estruturado em um comitê de múltiplas árvores de decisão independentes. Ele introduz dois princípios de aleatorização para controlar sobreajuste (*overfitting*):
-* **Bootstrap Aggregating (Bagging):** Cada árvore é treinada em um subconjunto aleatório das amostras obtido com reposição[cite: 1].
-* **Aleatorização de Atributos (Feature Bagging):** Em cada nó de divisão da árvore, apenas um subconjunto aleatório de bandas preditoras (geralmente $\sqrt{M}$, onde $M$ é o número total de bandas) é avaliado[cite: 1].
-* **Decisão por Maioria:** A classificação final de cada pixel resulta da moda (voto majoritário) das predições de todas as árvores individuais[cite: 1].
+* **Bootstrap Aggregating (Bagging):** Cada árvore é treinada em um subconjunto aleatório das amostras obtido com reposição.
+* **Aleatorização de Atributos (Feature Bagging):** Em cada nó de divisão da árvore, apenas um subconjunto aleatório de bandas preditoras (geralmente $\sqrt{M}$, onde $M$ é o número total de bandas) é avaliado.
+* **Decisão por Maioria:** A classificação final de cada pixel resulta da moda (voto majoritário) das predições de todas as árvores individuais.
 
 <div align="center">
     <img src="assets/Random Forest 03.gif" width="500" alt="App Demo">
     <p>Random Forests are a popular type of decision forest model. Here, you can see a forest of trees classifying an example by voting on the outcome.</p>
 </div>
 
-Para uma contextualização detalhada do funcionamento estatístico do Random Forest, consulte o vídeo: [StatQuest - Random Forest](https://youtu.be/J4Wdy0Wc_xQ)[cite: 1].
+Para uma contextualização detalhada do funcionamento estatístico do Random Forest, consulte o vídeo: [StatQuest - Random Forest](https://youtu.be/J4Wdy0Wc_xQ).
 
 #### 3. Variabilidade Espectral Intra-classe e Estratégia de Amostragem
-Variabilidade é o grau de dispersão ou agrupamento dos valores em um conjunto de dados[cite: 1]. No mapeamento de uso e cobertura da terra, uma mesma classe raramente possui assinatura espectral estática[cite: 1]:
+Variabilidade é o grau de dispersão ou agrupamento dos valores em um conjunto de dados. No mapeamento de uso e cobertura da terra, uma mesma classe raramente possui assinatura espectral estática:
 * Corpos hídricos variam conforme profundidade, sedimentos em suspensão e proliferação de algas.
 * Formações florestais e agroflorestais alteram sua reflectância de acordo com dossel, umidade foliar, sombreamento e sazonalidade.
 * Áreas abertas (solo exposto/pastagem) oscilam drasticamente em função da compactação, matéria orgânica e ressecamento.
 
-Uma amostragem adequada não deve coletar apenas "pixels puros centrais", mas precisa cobrir intencionalmente o gradiente ecológico e espectral da classe na área de estudo[cite: 1]. A distribuição de pontos aleatórios dentro de polígonos delimitados evita autocorrelação espacial local e garante amostras representativas[cite: 1].
+Uma amostragem adequada não deve coletar apenas "pixels puros centrais", mas precisa cobrir intencionalmente o gradiente ecológico e espectral da classe na área de estudo. A distribuição de pontos aleatórios dentro de polígonos delimitados evita autocorrelação espacial local e garante amostras representativas.
 
 ---
 
