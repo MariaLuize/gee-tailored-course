@@ -29,6 +29,11 @@ O filtro temporal opera através de uma janela móvel ternária unidirecional ($
 #### 3. Cálculo de Área Cartograficamente Correto
 Superfícies elipsoidais não podem ser projetadas em planos euclidianos sem distorção métrica. Multiplicar a contagem de pixels pela resolução nominal (ex.: $30 \times 30\text{ m} = 900\text{ m}^2$) gera erros cumulativos graves em grandes extensões. No Google Earth Engine, a métrica exata é obtida pela projeção local de áreas equivalentes através da função `ee.Image.pixelArea()`, computando a área real de cada pixel geodésico em metros quadrados antes da agregação espacial (`reduceRegion`).
 
+<div align="center">
+    <img src="assets/unnamed.png" width="500" alt="App Demo">
+    <p>Para ajudar a computar áreas, o Google Earth Engine possui o método `ee.Image.pixelArea()` que gera uma imagem na qual o valor de cada pixel é a área do pixel em metros quadrados. Logo é possível multiplicar.</p>
+</div>
+
 ---
 
 ### Execução no Google Earth Engine
@@ -190,6 +195,11 @@ The MapBiomas spatial filter implements a rigorous two-step post-processing stra
 
 2. **Local Majority Replacement**: Evaluates the spatial 3x3 window neighborhood (`ee.Kernel.square(1)`) flattened into image bands (`neighborhoodToBands`) and replaces the isolated pixels with the neighborhood's statistical mode (`ee.Reducer.mode()`).
 
+<div align="center">
+    <img src="assets/remotesensing-11-00808-g004.png" width="500" alt="App Demo">
+    <p>The spatial filter removes pixels that do not share neighbours of identical value. The minimum connection value was 10 pixels.</p>
+</div>
+
 
 
 #### 2. Temporal Logical Consistency
@@ -197,9 +207,19 @@ The MapBiomas spatial filter implements a rigorous two-step post-processing stra
 Independent annual classifications can produce ecologically impossible trajectories caused by cloud contamination, shadow remnants, or seasonal phenology (e.g., Forest $\rightarrow$ Pasture $\rightarrow$ Forest over three consecutive years).
 The temporal filter scans time-series data using a unidirectional three-year moving ternary window ($T-1$, $T$, $T+1$). If the start and end years share the same class while the central year abruptly differs, the central pixel is reclassified to preserve temporal continuity.
 
+<div align="center">
+    <img src="assets/temporalF.jpeg" width="500" alt="App Demo">
+    <p>The temporal filter inspects the central position of three consecutive years, and in cases of identical extremities, the centre position is reclassified to match its neighbour.</p>
+</div>
+
 #### 3. Cartographically Accurate Area Calculation
 
 Ellipsoidal surfaces cannot be projected onto planar coordinate grids without scale and area distortion. Simply multiplying pixel count by fixed grid spacing (e.g., $30 \times 30\text{ m} = 900\text{ m}^2$) creates cumulative errors over regional scales. In Google Earth Engine, area estimation must be conducted using `ee.Image.pixelArea()`, which computes the true geodesic surface area of each individual pixel in square meters before executing spatial reductions (`reduceRegion`).
+
+<div align="center">
+    <img src="assets/unnamed.png" width="500" alt="App Demo">
+    <p>Para ajudar a computar áreas, o Google Earth Engine possui o método `ee.Image.pixelArea()` que gera uma imagem na qual o valor de cada pixel é a área do pixel em metros quadrados. Logo é possível multiplicar.</p>
+</div>
 
 ---
 
@@ -208,9 +228,6 @@ Ellipsoidal surfaces cannot be projected onto planar coordinate grids without sc
 #### 3.1 Spatial Filter: Object/Neighborhood Noise Cleaning
 
 ```javascript
-/**
- * 3.1 Post-Classification Spatial Filter Structure
- */
 var PostClassification = function (image) {
 
   this.init = function (image) {
@@ -222,25 +239,18 @@ var PostClassification = function (image) {
     var maxSize = ee.Number(params.get('maxSize'));
     var classValue = ee.Number(params.get('classValue'));
 
-    // 1. Generate binary mask for the target class
     var classMask = image.eq(classValue);
 
-    // 2. Count contiguous connected pixels in the patch
+    // count contiguous connected pixels in the patch
     var labeled = classMask.mask(classMask).connectedPixelCount(maxSize, true);
-
-    // 3. Mark pixel blobs strictly smaller than maxSize
     var region = labeled.lt(maxSize);
 
-    // 4. Create 3x3 square convolution kernel
+    // 3x3 square convolution kernel
     var kernel = ee.Kernel.square(1);
 
-    // 5. Flatten neighborhood into bands and mask to noise region
+    // Flatten neighborhood into bands and mask to noise region
     var neighs = image.neighborhoodToBands(kernel).mask(region);
-
-    // 6. Compute spatial mode (majority class)
     var majority = neighs.reduce(ee.Reducer.mode());
-
-    // 7. Overwrite isolated patches with the majority class
     var filtered = image.where(region, majority);
 
     return filtered.byte();
@@ -323,9 +333,6 @@ Map.addLayer(filtered2025, visClassification, 'Classification 2025 (Temporal Fil
 #### 3.3 Geodetic Area Calculation and CSV Export
 
 ```javascript
-/**
- * 3.3 Geodetic Class Area Extraction in Hectares and Square Meters
- */
 var areaPerClass = function(img, classID) {
   var area = img
     .rename('area')
@@ -353,7 +360,6 @@ var area_3 = areaPerClass(filteredSpatial, 3);
 var areaCollection = ee.FeatureCollection([area_1, area_2, area_3]);
 print('Area Extraction Results:', areaCollection);
 
-// Export summary table to Google Drive
 Export.table.toDrive({
   collection: areaCollection,
   description: 'area_tome_acu_2026',
